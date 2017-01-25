@@ -1,0 +1,42 @@
+#!/bin/bash
+if [ ! -f /sys/class/net/enp3s0/operstate ]; then
+	enp3s0_check=down
+else
+	enp3s0_check=$(cat /sys/class/net/enp3s0/operstate)
+fi
+if [ $enp3s0_check = "up" ]; then
+	#ip neighbor flush dev enp3s0
+	~/.conky/nmap.pl enp3s0 > /dev/null
+else
+	echo "enp3s0 down"
+fi
+
+if [ ! -f /sys/class/net/wlp2s0/operstate ]; then
+        wlp2s0_check=down
+else
+        wlp2s0_check=$(cat /sys/class/net/wlp2s0/operstate)
+fi
+if [ $wlp2s0_check = "up" ]; then
+	#ip neighbor flush dev wlp2s0
+	~/.conky/nmap.pl wlp2s0 > /dev/null
+else
+	echo "wlp2s0 down"
+fi
+
+if [ ! -f /sys/class/net/wlp0s20u2/operstate ]; then
+        wlp0s20u2_check=down
+else
+        wlp0s20u2_check=$(cat /sys/class/net/wlp0s20u2/operstate)
+fi
+if [ $wlp0s20u2_check = "up" ]; then
+        #ip neighbor flush dev wlp2s0
+        ~/.conky/nmap.pl wlp0s20u2 > /dev/null
+else
+        echo "wlp0s20u2 down"
+fi
+nc -z ident.me 80 > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+	curl v4.ident.me > ~/.conky/ip
+else
+	echo "No Public IP" > ~/.conky/ip
+fi
